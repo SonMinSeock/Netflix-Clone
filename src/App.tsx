@@ -9,14 +9,14 @@ function App() {
     <BrowserRouter>
       <Headers />
       <Switch>
-        <Route path="/">
-          <Home />
-        </Route>
         <Route path="/tv">
           <Tv />
         </Route>
         <Route path="/search">
           <Search />
+        </Route>
+        <Route path="/">
+          <Home />
         </Route>
       </Switch>
     </BrowserRouter>

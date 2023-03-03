@@ -1,6 +1,7 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -61,7 +62,7 @@ const Circle = styled(motion.span)`
   background-color: ${(props) => props.theme.red};
 `;
 
-const Search = styled.span`
+const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -99,12 +100,16 @@ const logoVariants = {
 
 const navVariants = {
   top: {
-    backgroundColor: "rgba(0, 0, 0, 0)"
+    backgroundColor: "rgba(0, 0, 0, 0)",
   },
 
   scroll: {
-    backgroundColor: "rgba(0, 0, 0, 1)",    
-  }
+    backgroundColor: "rgba(0, 0, 0, 1)",
+  },
+};
+
+interface IForm {
+  keyword: string;
 }
 
 function Headers() {
@@ -133,22 +138,27 @@ function Headers() {
     setSearchOpen((prev) => !prev);
   };
 
+  const onValid = (data: IForm) => {
+    console.log(data);
+    history.push(`/search?keyword=${data.keyword}`);
+  };
+
   useEffect(() => {
     scrollY.onChange(() => {
       if (scrollY.get() > 80) {
         navAnimation.start("scroll");
       } else {
-        navAnimation.start("top")
+        navAnimation.start("top");
       }
-    })
+    });
   }, [scrollY, navAnimation]);
 
+  const history = useHistory();
+
+  const { register, handleSubmit } = useForm<IForm>();
+
   return (
-    <Nav
-      variants={navVariants}
-      initial="top"
-      animate={navAnimation}
-    >
+    <Nav variants={navVariants} initial="top" animate={navAnimation}>
       <Col>
         <Logo
           xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +187,7 @@ function Headers() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={triggerSearch}
             animate={{ x: searchOpen ? -180 : 0 }}
@@ -193,6 +203,7 @@ function Headers() {
             ></path>
           </motion.svg>
           <Input
+            {...register("keyword", { required: true, minLength: 2 })}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
             transition={{ type: "linear" }}

@@ -1,9 +1,16 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult } from "./api";
+import {
+  API_KEY,
+  BASE_URL,
+  getMovies,
+  getVideos,
+  IGetMoviesResult,
+  IGetVideoResult,
+} from "./api";
 import { makeImagePath } from "./utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
@@ -40,7 +47,7 @@ const Overview = styled.p`
 
 const Slider = styled.div`
   position: relative;
-  top: -100px; ;
+  top: -100px;
 `;
 
 const Row = styled(motion.div)`
@@ -121,17 +128,32 @@ const BigOverview = styled.p`
   top: -80px;
 `;
 
-const rowVariants = {
-  hidden: {
-    x: window.innerWidth + 5,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.innerWidth - 5,
-  },
-};
+const VideoInfo = styled.div`
+  position: relative;
+`;
+
+const Iframe = styled.iframe`
+  margin-top: 10px;
+  width: 50%;
+  height: 100%;
+`;
+
+const RightArrowBtn = styled.button`
+  position: absolute;
+  right: 0px;
+  top: 80px;
+`;
+
+const LeftArrowBtn = styled.button`
+  position: absolute;
+  top: 80px;
+`;
+
+const SliderTitle = styled.h2`
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 32px;
+  margin: 20px 20px;
+`;
 
 const boxVariants = {
   nomal: {
@@ -164,7 +186,7 @@ const offset = 6;
 function Home() {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-
+  const [sliderBtn, setSliderBtn] = useState(false);
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
 
@@ -173,6 +195,21 @@ function Home() {
   const { isLoading, data } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
+  );
+
+  const videosId = data?.results[0].id;
+
+  const { isLoading: loading, data: videos } = useQuery<IGetVideoResult>(
+    ["videos", videosId],
+    () => getVideos(videosId ?? 0),
+    {
+      enabled: !!videosId,
+    }
+  );
+
+  console.log(
+    "videos : ",
+    `https://www.youtube.com/watch?v=${videos?.results[2].key}`
   );
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -188,6 +225,7 @@ function Home() {
 
       console.log(maxIndex);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setSliderBtn(true);
     }
   };
 
@@ -203,7 +241,19 @@ function Home() {
       (movie) => String(movie.id) === bigMovieMatch.params.movieId
     );
 
-  console.log(clickedMovie);
+  console.log(data?.results[0].id);
+
+  const rowVariants = {
+    hidden: {
+      x: window.innerWidth + 5,
+    },
+    visible: {
+      x: 0,
+    },
+    exit: {
+      x: -window.innerWidth - 5,
+    },
+  };
 
   return (
     <Wrapper>
@@ -215,10 +265,19 @@ function Home() {
             onClick={increaseIndex}
             $bgImg={makeImagePath(data?.results[0].backdrop_path || "")}
           >
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+            <div style={{ display: "flex" }}>
+              <VideoInfo>
+                <Title>{data?.results[0].title}</Title>
+                <Overview>{data?.results[0].overview}</Overview>
+                <Iframe
+                  src={`https://www.youtube.com/embed/${videos?.results[2].key}?controls=&autoplay=1&loop=1&mute=1`}
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                ></Iframe>
+              </VideoInfo>
+            </div>
           </Banner>
           <Slider>
+            <SliderTitle>Now Playing</SliderTitle>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 variants={rowVariants}

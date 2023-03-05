@@ -68,6 +68,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Source Sans Pro', sans-serif;
     color: ${(props) => props.theme.white.darker};
     background-color: black;
+    
   }
   a {
     text-decoration: none;

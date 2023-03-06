@@ -77,7 +77,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 root.render(
-  <div>
+  <>
     <RecoilRoot>
       <QueryClientProvider client={client}>
         <ThemeProvider theme={theme}>
@@ -86,5 +86,5 @@ root.render(
         </ThemeProvider>
       </QueryClientProvider>
     </RecoilRoot>
-  </div>
+  </>
 );

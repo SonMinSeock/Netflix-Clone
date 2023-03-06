@@ -113,7 +113,10 @@ interface IForm {
 }
 
 function Headers() {
+  const { register, handleSubmit, setValue } = useForm<IForm>();
+
   const [searchOpen, setSearchOpen] = useState(false);
+  const [keyword, setKeyword] = useState("");
 
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
@@ -140,7 +143,8 @@ function Headers() {
 
   const onValid = (data: IForm) => {
     console.log(data);
-    history.push(`/search?keyword=${data.keyword}`);
+    history.replace(`/search?keyword=${data.keyword}`);
+    setValue("keyword", "");
   };
 
   useEffect(() => {
@@ -154,8 +158,6 @@ function Headers() {
   }, [scrollY, navAnimation]);
 
   const history = useHistory();
-
-  const { register, handleSubmit } = useForm<IForm>();
 
   return (
     <Nav variants={navVariants} initial="top" animate={navAnimation}>
@@ -187,7 +189,10 @@ function Headers() {
         </Items>
       </Col>
       <Col>
-        <Search onSubmit={handleSubmit(onValid)}>
+        <Search
+          action={`/search?keyword=${keyword}`}
+          onSubmit={handleSubmit(onValid)}
+        >
           <motion.svg
             onClick={triggerSearch}
             animate={{ x: searchOpen ? -180 : 0 }}

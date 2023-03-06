@@ -10,6 +10,14 @@ export interface IMovie {
   poster_path: string;
 }
 
+export interface ITv {
+  id: number;
+  backdrop_path: string;
+  name: string;
+  overview: string;
+  vote_average: number;
+}
+
 export interface IGetMoviesResult {
   dates: {
     maximum: string;
@@ -37,8 +45,34 @@ export interface IGetVideoResult {
   results: IVideo[];
 }
 
+export interface IGetPopularResult {
+  results: IMovie[];
+}
+
+export interface IGetTopRatedResult {
+  results: IMovie[];
+}
+
+export interface IGetUpcomingResult {
+  results: IMovie[];
+}
+
+export interface IGetPopularTvResult {
+  results: ITv[];
+}
+
+export interface IGetSearchMovieResult {
+  results: IMovie[];
+}
+
 export function getMovies() {
   return fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
+
+export function getPopulationMovies() {
+  return fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }
@@ -46,5 +80,35 @@ export function getMovies() {
 export function getVideos(id: number) {
   return fetch(
     `${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`
+  ).then((response) => response.json());
+}
+
+export function getTopRatedMovies() {
+  return fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
+
+export function getUpcommingMovies() {
+  return fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
+
+export function getPopularTv() {
+  return fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}`).then((response) =>
+    response.json()
+  );
+}
+
+export function getVideosTv(id: number) {
+  return fetch(
+    `${BASE_URL}/tv/${id}/videos?api_key=${API_KEY}&language=en-US`
+  ).then((response) => response.json());
+}
+
+export function getSearchMovies(keyword: string) {
+  return fetch(
+    `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${keyword}&page=1&include_adult=false`
   ).then((response) => response.json());
 }

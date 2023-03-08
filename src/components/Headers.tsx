@@ -62,7 +62,7 @@ const Circle = styled(motion.span)`
   background-color: ${(props) => props.theme.red};
 `;
 
-const Search = styled.form`
+const SearchForm = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -142,9 +142,9 @@ function Headers() {
   };
 
   const onValid = (data: IForm) => {
-    console.log(data);
-    history.replace(`/search?keyword=${data.keyword}`);
     setValue("keyword", "");
+    console.log("hello");
+    history.push(`/search?keyword=${data.keyword}`);
   };
 
   useEffect(() => {
@@ -189,10 +189,7 @@ function Headers() {
         </Items>
       </Col>
       <Col>
-        <Search
-          action={`${process.env.PUBLIC_URL}/search?keyword=${keyword}`}
-          onSubmit={() => handleSubmit(onValid)}
-        >
+        <SearchForm onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={triggerSearch}
             animate={{ x: searchOpen ? -180 : 0 }}
@@ -214,7 +211,7 @@ function Headers() {
             transition={{ type: "linear" }}
             placeholder="Search for movie or tv show..."
           />
-        </Search>
+        </SearchForm>
       </Col>
     </Nav>
   );

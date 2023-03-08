@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
@@ -149,14 +149,18 @@ function Search() {
 
   const keyword = new URLSearchParams(location.search).get("keyword");
 
+  console.log("keyword : ", keyword);
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/search/:movieId");
 
   console.log("search match : ", bigMovieMatch);
   const { scrollY } = useScroll();
 
-  const { isLoading, data } = useQuery<IGetSearchMovieResult>(
+  const { isLoading, data, refetch } = useQuery<IGetSearchMovieResult>(
     ["movies", "nowPlaying"],
-    () => getSearchMovies(keyword ?? "")
+    () => getSearchMovies(keyword ?? ""),
+    {
+      enabled: !!keyword,
+    }
   );
 
   const [index, setIndex] = useState(0);
@@ -192,12 +196,12 @@ function Search() {
 
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
-    data?.results.find(
-      (movie) => String(movie.id) === bigMovieMatch.params.movieId
-    );
+    data?.results.find((movie) => {
+      console.log(movie.id + "" === bigMovieMatch.params.movieId);
+      return String(movie.id) === bigMovieMatch.params.movieId;
+    });
 
-  console.log(data?.results);
-
+  console.log("clicked Movie : ", clickedMovie);
   return (
     <>
       <Slider>

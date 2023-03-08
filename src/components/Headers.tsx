@@ -191,7 +191,7 @@ function Headers() {
       <Col>
         <Search
           action={`/search?keyword=${keyword}`}
-          onSubmit={handleSubmit(onValid)}
+          onSubmit={() => handleSubmit(onValid)}
         >
           <motion.svg
             onClick={triggerSearch}

@@ -151,6 +151,7 @@ function Search() {
 
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/search/:movieId");
 
+  console.log("search match : ", bigMovieMatch);
   const { scrollY } = useScroll();
 
   const { isLoading, data } = useQuery<IGetSearchMovieResult>(

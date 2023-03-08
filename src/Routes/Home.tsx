@@ -52,11 +52,6 @@ const Overview = styled.p`
 const Slider = styled.div`
   position: relative;
   top: -90px;
-  background-color: yellow;
-
-  &:nth-child(1) h2 {
-    top: -50px;
-  }
 `;
 
 const Row = styled(motion.div)`

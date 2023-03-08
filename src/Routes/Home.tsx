@@ -17,7 +17,6 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import YouTube from "react-youtube";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -54,6 +53,10 @@ const Slider = styled.div`
   position: relative;
   top: -90px;
   background-color: yellow;
+
+  &:nth-child(1) h2 {
+    top: -50px;
+  }
 `;
 
 const Row = styled(motion.div)`
@@ -185,7 +188,7 @@ const SliderPopularTitle = styled.h2`
 const SliderTopMovieTitle = styled.h2`
   color: ${(props) => props.theme.white.lighter};
   font-size: 32px;
-  position: absolute;
+  position: relative;
   top: 545px;
 `;
 
@@ -231,6 +234,7 @@ function Home() {
   const [upcomingIndex, setUpcomingInex] = useState(0);
   const [leftToggle, setLeftToggle] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [clickBox, setClickBox] = useState("");
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
 
@@ -322,7 +326,8 @@ function Home() {
     }
   };
 
-  const onBoxClicked = (movieId: number) => {
+  const onBoxClicked = (movieId: number, clickStr: string) => {
+    setClickBox(String(movieId) + clickStr);
     history.push(`/movies/${movieId}`);
   };
 
@@ -455,7 +460,7 @@ function Home() {
                       whileHover="hover"
                       transition={{ type: "tween" }}
                       $bgImg={makeImagePath(movie.backdrop_path || "")}
-                      onClick={() => onBoxClicked(movie.id)}
+                      onClick={() => onBoxClicked(movie.id, "")}
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
@@ -489,7 +494,7 @@ function Home() {
                       whileHover="hover"
                       transition={{ type: "tween" }}
                       $bgImg={makeImagePath(movie.backdrop_path || "")}
-                      onClick={() => onBoxClicked(movie.id)}
+                      onClick={() => onBoxClicked(movie.id, "_popular")}
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
@@ -526,7 +531,7 @@ function Home() {
                       whileHover="hover"
                       transition={{ type: "tween" }}
                       $bgImg={makeImagePath(movie.backdrop_path || "")}
-                      onClick={() => onBoxClicked(movie.id)}
+                      onClick={() => onBoxClicked(movie.id, "_top_rated")}
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
@@ -563,7 +568,7 @@ function Home() {
                       whileHover="hover"
                       transition={{ type: "tween" }}
                       $bgImg={makeImagePath(movie.backdrop_path || "")}
-                      onClick={() => onBoxClicked(movie.id)}
+                      onClick={() => onBoxClicked(movie.id, "_upcoming")}
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
@@ -585,7 +590,7 @@ function Home() {
                   exit={{ opacity: 0 }}
                 />
                 <BigMovie
-                  layoutId={bigMovieMatch.params.movieId}
+                  layoutId={clickBox}
                   style={{
                     top: scrollY.get() + 100,
                   }}

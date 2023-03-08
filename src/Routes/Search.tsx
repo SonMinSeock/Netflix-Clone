@@ -155,7 +155,7 @@ function Search() {
   console.log("search match : ", bigMovieMatch);
   const { scrollY } = useScroll();
 
-  const { isLoading, data, refetch } = useQuery<IGetSearchMovieResult>(
+  const { isLoading, data } = useQuery<IGetSearchMovieResult>(
     ["movies", "nowPlaying"],
     () => getSearchMovies(keyword ?? ""),
     {

@@ -190,7 +190,7 @@ function Headers() {
       </Col>
       <Col>
         <Search
-          action={`/search?keyword=${keyword}`}
+          action={`${process.env.PUBLIC_URL}/search?keyword=${keyword}`}
           onSubmit={() => handleSubmit(onValid)}
         >
           <motion.svg
